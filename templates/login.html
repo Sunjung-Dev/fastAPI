@@ -1,0 +1,67 @@
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<head>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<div>
+    <!-- 구글 로그인 버튼 노출 영역-->
+    <div id="buttonDiv"></div>
+
+    <script type="text/javascript">
+        window.identity = {};
+
+        let b64DecodeUnicode = str =>
+            decodeURIComponent(
+                Array.prototype.map.call(atob(str), c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                ).join(''))
+
+        let parseJwt = token =>
+            JSON.parse(
+                b64DecodeUnicode(
+                    token.split('.')[1].replace('-', '+').replace('_', '/')
+                )   
+            )
+
+        function handleCredentialResponse(response){
+            console.log("encoded jwt id token: "+response.credential);
+            window.identity = parseJwt(response.credential);
+            document.getElementById("welcome").innerHTML = window.identity.email;
+            var email = window.identity.email
+            var redirect_url = "http://localhost/api/auth/login/complete/" + email;
+            console.log(redirect_url)
+            var payload = {
+                "email": email,
+                "name": window.identity.name
+            };
+            fetch("/api/auth/google/complete",
+            {
+
+                method:"POST",
+                referrerPolicy: 'no-referrer-when-downgrade',
+                body:JSON.stringify(payload),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => {
+                console.log(response)
+                window.location.href=redirect_url
+            })
+        }
+
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: '894423569903-mh5ac188899j7ceavdg4oab352cvpru1.apps.googleusercontent.com',
+                callback: handleCredentialResponse,
+            });
+
+        // Display the Sign In With Google Button
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: 'outline', size: 'small' }
+                );
+                google.accounts.id.prompt();
+            }
+    </script>
+</div>

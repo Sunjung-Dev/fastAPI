@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Hy-care</title>
+    <style>
+        body {
+            font-size: 14px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .frame-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            overflow: hidden;
+            min-height: 100vh;
+            align-items: center;
+            flex-direction: column;
+        }
+        .frame-frame {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            overflow: hidden;
+            align-items: flex-start;
+            flex-shrink: 0;
+            background-color: rgba(255, 255, 255, 1);
+        }
+        .login-paient-div {
+            width: 387px;
+            height: 450px;
+            background: url("../images/v23_586.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            opacity: 1;
+            position: absolute;
+            top: 190px;
+            left: 830px;
+            overflow: hidden;
+        }
+        .div2 {
+            width: 387px;
+            height: 387px;
+            background: rgba(255,255,255,1);
+            opacity: 1;
+            position: relative;
+            top: 0px;
+            left: 0px;
+            overflow: hidden;
+        }
+        .name {
+            color: #fff;
+        }
+        .login-patient {
+            width: 219px;
+            color: rgba(0,0,0,1);
+            position: absolute;
+            top: 401px;
+            left: 83px;
+            font-family: Inter;
+            font-weight: Bold;
+            font-size: 24px;
+            opacity: 1;
+            text-align: center;
+        }
+        .login-patient-image {
+            width: 350px;
+            height: 350px;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            opacity: 1;
+            position: relative;
+            top: -400px;
+            left: 20px;
+            overflow: hidden;
+        }
+        .login-doctor-div {
+            width: 369px;
+            height: 474px;
+            opacity: 1;
+            position: absolute;
+            top: 166px;
+            left: 333px;
+            overflow: hidden;
+        }
+        .login-doctor {
+            width: 219px;
+            color: rgba(0,0,0,1);
+            position: absolute;
+            top: 425px;
+            left: 64px;
+            font-family: Inter;
+            font-weight: Bold;
+            font-size: 24px;
+            opacity: 1;
+            text-align: center;
+        }
+        .login-doctor-image {
+            width: 369px;
+            height: 414px;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            opacity: 1;
+            position: relative;
+            top: 0px;
+            left: 0px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <th:block layout:fragment="header" th:include="@{/fragments/header}"></th:block>
+    <div class="frame-container">
+        <div class="frame-frame">
+            <div class="login-doctor-div" onclick="doctorLogin()">
+                <a href="#" onclick="location.href='/login'" class="login-doctor">의사로 로그인하기</a>
+                <img class="login-doctor-image" src="../static/img/logindoctor.png" alt="login-doctor-image"/>
+            </div>
+            <div class="login-paient-div" onclick="paientLogin()">
+                <div class="div2">
+                    <div class="name"></div>
+                </div>
+                <a href="#" onclick="location.href='/login'" class="login-patient">환자로 로그인하기</a>
+                <img class="login-patient-image" src="../static/img/loginpatient.png" alt="login-patient-image"/>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="footer" th:include="@{/fragments/footer}"></th:block>
+</body>
+</html>

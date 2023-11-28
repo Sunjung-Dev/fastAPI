@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script>
+    const ROOM_ID = "<%= roomId %>"
+  </script>
+  <script defer src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
+  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <title>Document</title>
+  <style>
+    #video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 300px);
+      grid-auto-rows: 300px;
+    }
+    
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div id="video-grid"></div>
+  <button id = "start">Start</button>
+  <button id = "stop">Stop</button>
+  <div id="completed"></div>
+  <textarea id = "result" rows="8" cols="80"></textarea> <br>
+  <div id="summary_test">summary</div>
+  <textarea id = "result2" rows="8" cols="80"></textarea> <br>
+  <script type="text/javascript">
+	  var startButton = document.getElementById('start');
+	  var stopButton = document.getElementById('stop');
+	  var resultElement = document.getElementById('result');
+	  var result2 = document.getElementById('result2');
+	  var recognition = new webkitSpeechRecognition();
+	  var conversationDictObject = [];
+
+	  recognition.lang = window.navigator.language;
+	  recognition.interimResults = false;
+	  recognition.continuous = true;
+    // startButton을 통해서 stt변환 시작 
+	  startButton.addEventListener('click', () => { recognition.start(); });
+    // stopButton을 통해서 stt변환 종료 및 chatGPT API 호출을 통한 텍스트 요약 
+	  stopButton.addEventListener('click', () => { 
+		 var json = { ... conversationDictObject};
+		 console.log(json)
+		 $.ajax({
+            type:'POST',
+            url:'http://18.183.168.176:8080/summary',
+            data: json,
+            dataType:'json',
+						contentType: 'application/json',
+			      header: {'Access-Control-Allow-Origin':'*'},
+            error:function(){
+              console.log('error');
+            },
+            success:function(data){
+							console.log("successed")
+              $('#completed').append("ok!!!! ")
+							result2.textContent = data;
+            }
+          });
+          recognition.stop(); });
+
+    // recognition 객체를 통해 어떤 결과값을 화면의 보여줄 것인지에 대한 이벤트 리스터 
+	  recognition.addEventListener('result', (event) => {
+	  console.log(event.results[event.results.length - 1][0].confidence)
+    // 들어온 오디오에 대해 변환된 stt 문장에 대해서 confidence값이 0.77이 넘는다면 한 문장으로 인식하여 화면에 출력
+		  if (event.results[event.results.length - 1][0].confidence >= 0.77){
+			  const result = event.results[event.results.length - 1][0].transcript;
+        // 대화를 json 형식으로 변환해 chatGPT API로 넘겨주기 위해서 딕셔너리 형태로 대화를 저장하는데, 
+        // 두번 인식할 경우 중복되는 대화가 들어가기 때문에 만약 딕셔너리에 이미 데이터가 있을 경우 해당 문장은 추가하지 않음. 
+			  if (result.includes(conversationDictObject[conversationDictObject.length-1])){
+				  const idx = conversationDictObject.indexOf(conversationDictObject[conversationDictObject.length-1])
+				  if (idx > -1) conversationDictObject.splice(idx, 1)
+			  }
+			  if (result != conversationDictObject[conversationDictObject.length-1]){
+				  console.log(conversationDictObject.length-1)
+				  conversationDictObject.push(result)
+			          console.log(conversationDictObject)
+				  resultElement.textContent = result;
+			  } 
+		  } 
+	  });
+ </script>
+</body>
+</html>

@@ -1,10 +1,17 @@
-FROM python:3.12
+FROM docker.io/library/node:18.18.2 as build
 
 WORKDIR /Users/kimsunjung/Desktop/dev/fastAPI
-COPY ./ /test
+COPY ./ /webrtc
 
-WORKDIR /test
-RUN pip3 install -r requirements.txt 
+# CMD . ~/.nvm/nvm.sh
 
-CMD uvicorn --host=0.0.0.0 --port 8000 main:app 
+WORKDIR /webrtc
+RUN npm install express
+RUN npm init -y
+RUN npm i express ejs
+RUN npm install socket.io@^2.3.0
+RUN npm i --save-dev nodemon
+RUN npm i -g peer
+RUN npm run devStart
+RUN peerjs --port 3001
 

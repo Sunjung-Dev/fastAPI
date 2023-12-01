@@ -26,9 +26,10 @@
         function handleCredentialResponse(response){
             console.log("encoded jwt id token: "+response.credential);
             window.identity = parseJwt(response.credential);
+            console.log(window.identity)
             document.getElementById("welcome").innerHTML = window.identity.email;
             var email = window.identity.email
-            var redirect_url = "http://localhost/api/auth/login/complete/" + email;
+            var redirect_url = "http://localhost:8080/api/auth/login/complete/" + email;
             console.log(redirect_url)
             var payload = {
                 "email": email,
@@ -52,7 +53,7 @@
 
         window.onload = function () {
             google.accounts.id.initialize({
-                client_id: '894423569903-mh5ac188899j7ceavdg4oab352cvpru1.apps.googleusercontent.com',
+                client_id: '894423569903-kq2uqblg322m601hqgfapmqg7ife35nn.apps.googleusercontent.com',
                 callback: handleCredentialResponse,
             });
 

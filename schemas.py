@@ -3,4 +3,5 @@ from datetime import datetime
 
 class userInfo(BaseModel):
     memID: int = 0
-    memName: str
+    email: str
+    
